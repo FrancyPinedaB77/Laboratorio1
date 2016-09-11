@@ -22,7 +22,7 @@ public class MapR3 extends Mapper<LongWritable, Text, Text,IntWritable> {
 
 	@Override
 	protected void map(LongWritable key, Text value,Context context)
-					throws IOException, InterruptedException {
+			throws IOException, InterruptedException {
 		//Noticias del dataset entregado 
 		String noticia = StringEscapeUtils.unescapeHtml(value.toString());
 		//Me limpia los datos y los guarda en noticia
@@ -33,17 +33,30 @@ public class MapR3 extends Mapper<LongWritable, Text, Text,IntWritable> {
 		Pattern p = Pattern.compile("<DATE>(\\s*)(?:\\d{1,2}-([A-Z]{3})-(\\d{4}))(.*)</DATE>");
 		Matcher m = p.matcher(noticia);
 		if (m.find()){
-			 			String fechaCadena= m.group(2);//fecha de cada noticia
-			 			Pattern pt = Pattern.compile("<TITLE>(.*)</TITLE>",Pattern.DOTALL);
-			 			Matcher mt = pt.matcher(noticia.toString());
-			 			if(mt.find()){
-			 				String titulo= mt.group(1);
+			String fechaCadena= m.group(2);//fecha de cada noticia
+			Pattern pt = Pattern.compile("<TITLE>(.*)</TITLE>",Pattern.DOTALL);
+			Matcher mt = pt.matcher(noticia.toString());
+			if(mt.find()){
+				String titulo= mt.group(1);
+				if((titulo.split("\\s+").length==1)){
+					IntWritable i= new IntWritable(1);
+					Text t = new Text(fechaCadena);
+					context.write(t, i);
+					if((titulo.split("\\s+").length==2)){
+						IntWritable r= new IntWritable(1);
+						Text t1 = new Text(fechaCadena);
+						context.write(t1, r);
+					
+
+
+														/*String titulo= mt.group(1);
 			 				if((titulo.split("\\s+").length>1)&&(titulo.split("\\s+").length<10)){
 			 					IntWritable i= new IntWritable(1);
 			 					Text t = new Text(fechaCadena);
-			 					context.write(t, i);
-			
-			
+			 					context.write(t, i);*/
+
+
+
 						/*
 			try {
 				date = sdf0.parse(fechaCadena);
@@ -61,25 +74,31 @@ public class MapR3 extends Mapper<LongWritable, Text, Text,IntWritable> {
 						String titulo= mt.group(1);
 						if((titulo.split("\\s+").length>1)&&(titulo.split("\\s+").length<10)){
 							int numti=1;
-							
+
 							IntWritable i= new IntWritable(numti);
 							Text t = new Text(mes);
 							context.write(t, i);
 						}
 					}										
 					//FIN		
-							
-					
+
+
 				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			
+
+					}
+				}
+			}
 		}
-		}
-	}
 	}
 }
+
+
+
+
+
 
 
